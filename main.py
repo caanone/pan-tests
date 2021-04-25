@@ -74,21 +74,22 @@ def get_predefined_services(device: firewall.Firewall):
 
 def find_fw_on_pan(_panorama):
     pan_devs = _panorama.refresh_devices(include_device_groups=False, expand_vsys=False)
-    for p_dev in pan_devs:
+    pan_fw = firewall.Firewall()
+    for pan_fw in pan_devs:
         for x in devices:
-            if x[1] == p_dev.about()['serial']:
-                p_dev = x[0]
-    return p_dev
+            if x[1] == pan_fw.about()['serial']:
+                pan_fw = x[0]
+    return pan_fw
 
 
-def create_dev_obj(hosts):
+def create_dev_obj(_hosts):
     dev_objs = []
-    for host in hosts:
+    for host in _hosts:
         dev, active = '', False
-        if hosts[host]['DEVICE'] == "panorama":
-            dev = panorama.Panorama(hostname=hosts[host]['IP_ADDR'], api_key=hosts[host]['API_KEY'])
-        elif hosts[host]['DEVICE'] == "firewall":
-            dev = firewall.Firewall(hostname=hosts[host]['IP_ADDR'], api_key=hosts[host]['API_KEY'])
+        if _hosts[host]['DEVICE'] == "panorama":
+            dev = panorama.Panorama(hostname=_hosts[host]['IP_ADDR'], api_key=_hosts[host]['API_KEY'])
+        elif _hosts[host]['DEVICE'] == "firewall":
+            dev = firewall.Firewall(hostname=_hosts[host]['IP_ADDR'], api_key=_hosts[host]['API_KEY'])
         else:
             print('unexpected device type', host)
         try:
@@ -108,8 +109,8 @@ if __name__ == '__main__':
             print(dev_sys_info['serial'], "\t", dev_sys_info['ip-address'])
             p_dev = find_fw_on_pan(dev)
             for x in get_local_policies_from_fw(p_dev):
-                # print(f"name: {x['name']}, app: {x['application']}, service: {x['service']}, action: {x['action']}")
-                pass
+                print(f"name: {x['name']}, app: {x['application']}, service: {x['service']}, action: {x['action']}")
+                
         elif isinstance(dev, firewall.Firewall):
             print(dev_sys_info['serial'], "\t", dev_sys_info['ip-address'])
 
