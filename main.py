@@ -103,14 +103,13 @@ def create_dev_obj(hosts):
 if __name__ == '__main__':
     devices = create_dev_obj(hosts)
     for dev, serial in devices:
+        dev_sys_info = dev.show_system_info()['system']
         if isinstance(dev, panorama.Panorama):
+            print(dev_sys_info['serial'], "\t", dev_sys_info['ip-address'])
             p_dev = find_fw_on_pan(dev)
             for x in get_local_policies_from_fw(p_dev):
-                print(f"name: {x['name']}, app: {x['application']}, service: {x['service']}, action: {x['action']}")
-
-            print(dev_sys_info['serial'], "\t", dev_sys_info['ip-address'])
+                # print(f"name: {x['name']}, app: {x['application']}, service: {x['service']}, action: {x['action']}")
+                pass
         elif isinstance(dev, firewall.Firewall):
-            dev_sys_info = dev.show_system_info()['system']
             print(dev_sys_info['serial'], "\t", dev_sys_info['ip-address'])
-        # except (panorama.err.PanURLError, pan.xapi.PanXapiError) as e:
-        #     print(f'Connection error: {e}')
+
