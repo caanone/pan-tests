@@ -115,3 +115,4 @@ dmypy.json
 /creds.py
 .idea/
 
+.DS_Store
